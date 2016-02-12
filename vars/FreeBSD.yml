@@ -1,0 +1,7 @@
+---
+apache:
+  service_name: apache24
+  config_path: /usr/local/etc/apache24
+  module_path: libexec/apache24
+
+root_group: wheel

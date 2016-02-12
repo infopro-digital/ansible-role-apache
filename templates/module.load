@@ -1,0 +1,3 @@
+{{ ansible_managed | comment }}
+
+LoadModule {{ item }}_module {{ apache.module_path }}/mod_{{ item }}.so

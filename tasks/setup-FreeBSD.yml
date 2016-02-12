@@ -1,0 +1,4 @@
+---
+- name: Ensure Apache is installed on FreeBSD.
+  pkgng: name=apache24 state=installed
+

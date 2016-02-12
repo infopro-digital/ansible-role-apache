@@ -1,0 +1,36 @@
+---
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- include: "setup-{{ ansible_os_family }}.yml"
+
+- file: name={{ apache.config_path }}/{{ item }} owner=root group={{ root_group }} state=directory mode=0755
+  with_items:
+    - mods-enabled
+    - mods-available
+    - sites-enabled
+    - sites-available
+    - conf.d
+
+- include: "config-{{ ansible_os_family }}.yml"
+
+# Add module links
+- file: src={{ apache.config_path }}/mods-available/{{ item }}.load dest={{ apache.config_path }}/mods-enabled/{{ item }}.load state=link
+  with_items: apache.modules
+
+# Configure virtualhost templates
+- template: src=virtualhost.conf dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
+  with_items: apache.vhosts
+  notify: reload apache
+
+- file: src={{ apache.config_path }}/sites-available/{{ item }} dest={{ apache.config_path }}/sites-enabled/{{ item }} state=link
+  with_items: apache.vhosts
+  notify: reload apache
+
+# Security
+- template: src=security.conf dest={{ apache.config_path }}/conf.d/security.conf owner=root group={{ root_group }} mode=0644
+
+
+# Service
+- service: name={{ apache.service_name }} state=started enabled={{ apache.service_enable }}
+  when: service_manage

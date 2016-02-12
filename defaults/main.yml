@@ -1,0 +1,16 @@
+---
+apache:
+  service_manage: true
+  service_enable: true
+  server_admin: admin@example.org
+  ip: "*"
+  port: 80
+  errordocs: {}
+  vhosts: []
+  modules: []
+  security:
+    server_tokens: 'Prod'
+    server_signature: 'Off'
+    trace_enable: 'Off'
+    protect_vcs_directories: true
+    prevent_clickjacking: false
