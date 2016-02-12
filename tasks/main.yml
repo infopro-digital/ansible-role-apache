@@ -12,6 +12,9 @@
     - sites-available
     - conf.d
 
+# Log path
+- file: path="{{ apache.log_path }}" state=directory owner=root group="{{ root_group }}"
+
 - include: "config-{{ ansible_os_family }}.yml"
 
 # Add module links
