@@ -1,18 +1,12 @@
 ---
-- name: "APACHE | mod_jk installation"
-  apt: name="libapache2-mod-jk" state=installed
-  when: "'jk' in apache.modules"
-
-- name: "APACHE | mod_auth_pgsql installation"
-  apt: name="libapache2-mod-auth-pgsql" state=installed
-  when: "'auth-pgsql' in apache.modules"
+- name: "APACHE | Blacklist modules"
+  apache2_module: name="{{ item }}" state=absent
+  with_items: apache.modules_blacklist
+  notify: restart apache
 
 - name: "APACHE | Enable modules"
   apache2_module: name="{{ item }}" state=present
   with_items: apache.modules
   notify: restart apache
 
-- name: "APACHE | Blacklist modules"
-  apache2_module: name="{{ item }}" state=absent
-  with_items: apache.modules_blacklist
-  notify: restart apache
+

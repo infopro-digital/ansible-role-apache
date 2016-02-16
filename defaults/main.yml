@@ -9,6 +9,9 @@ apache:
   vhosts: []
   modules: []
   modules_blacklist: []
+  jk:
+    method: 'Busyness'
+    workers: {}
   security:
     server_tokens: 'Prod'
     server_signature: 'Off'

@@ -21,6 +21,9 @@
 - name: "APACHE | Log directory"
   file: path="{{ apache.log_path }}" state=directory owner=root group="{{ root_group }}"
 
+- name: "APACHE | Modules management"
+  include: modules.yml
+
 - name: "APACHE | OS specific configuration"
   include: "config-{{ ansible_os_family }}.yml"
 

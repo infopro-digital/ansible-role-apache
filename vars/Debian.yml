@@ -5,5 +5,8 @@ apache:
   config_path: /etc/apache2
   module_path: /usr/lib/apache2/modules
   log_path: /var/log/apache2
+  module_names:
+    auth_pgsql: libapache2-mod-auth-pgsql
+    jk: libapache2-mod-jk
 
 root_group: root

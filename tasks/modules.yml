@@ -1,0 +1,32 @@
+---
+- name: "APACHE | mod_jk installation"
+  package: name="{{ apache.module_names.jk }}" state=installed
+  when: "'jk' in apache.modules"
+  notify: restart apache
+
+- name: "APACHE | mod_jk configuration"
+  template: src="mod_jk.conf" dest="{{ apache.config_path }}/mods-available/jk.conf" owner=root group={{ root_group }}
+  when: "'jk' in apache.modules"
+  notify: reload apache
+
+- name: "APACHE | mod_jk workers.properties"
+  template: src="workers.properties" dest="{{ apache.config_path }}/workers.properties" owner=root group={{ root_group }}
+  when: "'jk' in apache.modules"
+  notify: reload apache
+
+- name: "APACHE | mod_auth_pgsql installation"
+  package: name="{{ apache.module_names.auth_pgsql }}" state=installed
+  when: "'auth_pgsql' in apache.modules"
+  notify: restart apache
+
+- name: "APACHE | Modules global config removal"
+  file: path={{ apache.config_path }}/mods-enabled/{{ item }}.conf state=absent
+  when: "'{{ item }}' not in apache.modules"
+  with_items: ['jk']
+  notify: reload apache
+
+- name: "APACHE | Modules global config activation"
+  file: src={{ apache.config_path }}/mods-available/{{ item }}.conf dest={{ apache.config_path }}/mods-enabled/{{ item }}.conf state=link
+  when: "'{{ item }}' in apache.modules"
+  with_items: ['jk']
+  notify: reload apache
