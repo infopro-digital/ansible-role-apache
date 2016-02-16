@@ -4,4 +4,5 @@
 
 - name: restart apache
   service: name={{ apache.service_name }} state=restarted
+  when: apache.service_manage
 

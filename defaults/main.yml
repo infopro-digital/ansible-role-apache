@@ -8,6 +8,7 @@ apache:
   errordocs: {}
   vhosts: []
   modules: []
+  modules_blacklist: []
   security:
     server_tokens: 'Prod'
     server_signature: 'Off'
