@@ -1,13 +1,16 @@
 ---
-- name: Include OS-specific variables.
+- name: "APACHE | Include OS-specific variables"
   include_vars: "{{ ansible_os_family }}.yml"
 
-- include: "setup-{{ ansible_os_family }}.yml"
+- name: "APACHE | OS specific setup"
+  include: "setup-{{ ansible_os_family }}.yml"
   when: ansible_os_family in ['Debian']
 
-- package: name={{ apache.package_name }} state=installed
+- name: "APACHE | Install package"
+  package: name={{ apache.package_name }} state=installed
 
-- file: name={{ apache.config_path }}/{{ item }} owner=root group={{ root_group }} state=directory mode=0755
+- name: "APACHE | base directories"
+  file: name={{ apache.config_path }}/{{ item }} owner=root group={{ root_group }} state=directory mode=0755
   with_items:
     - mods-enabled
     - mods-available
@@ -15,23 +18,28 @@
     - sites-available
     - conf.d
 
-# Log path
-- file: path="{{ apache.log_path }}" state=directory owner=root group="{{ root_group }}"
+- name: "APACHE | Log directory"
+  file: path="{{ apache.log_path }}" state=directory owner=root group="{{ root_group }}"
 
-- include: "config-{{ ansible_os_family }}.yml"
+- name: "APACHE | OS specific configuration"
+  include: "config-{{ ansible_os_family }}.yml"
 
 # Configure virtualhost templates
-- template: src=virtualhost.conf dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
+- name: "APACHE | Virtualhost configuration"
+  template: src=virtualhost.conf dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
   with_items: apache.vhosts
   notify: reload apache
 
-- file: src={{ apache.config_path }}/sites-available/{{ item }} dest={{ apache.config_path }}/sites-enabled/{{ item }} state=link
+- name: "APACHE | Virtualhost activation"
+  file: src={{ apache.config_path }}/sites-available/{{ item.name }}.conf dest={{ apache.config_path }}/sites-enabled/{{ item.name }}.conf state=link
   with_items: apache.vhosts
   notify: reload apache
 
 # Security
-- template: src=security.conf dest={{ apache.config_path }}/conf.d/security.conf owner=root group={{ root_group }} mode=0644
+- name: "APACHE | Security configuration"
+  template: src=security.conf dest={{ apache.config_path }}/conf.d/security.conf owner=root group={{ root_group }} mode=0644
 
 # Service
-- service: name={{ apache.service_name }} state=started enabled={{ apache.service_enable }}
+- name: "APACHE | Service state management"
+  service: name={{ apache.service_name }} state=started enabled={{ apache.service_enable }}
   when: apache.service_manage

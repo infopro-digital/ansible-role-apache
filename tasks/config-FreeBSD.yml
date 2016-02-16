@@ -12,8 +12,13 @@
 # Remove module lines from httpd.conf
 - lineinfile: dest="{{ apache.config_path }}/httpd.conf" regexp="^LoadModule (.*)" state=absent
 
-- apt: name="ap24-mod_jk" state=installed
+- name: "APACHE | mod_jk installation"
+  pkgng: name="ap24-mod_jk" state=installed
   when: "'jk' in apache.modules"
+
+- name: "APACHE | mod_auth_pgsql2 installation"
+  pkgng: name="ap24-mod_auth_pgsql2" state=installed
+  when: "'auth_pgsql2' in apache.modules"
 
 # Add module links
 - name: "APACHE | Enable modules"
