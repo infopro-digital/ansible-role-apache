@@ -85,9 +85,11 @@ Here is the exhaustive list of config variables:
 * allow_override (optionnal, default None): Allow overriding Apache configuration for DocumentRoot Directory
 * document_root_fragment (optionnal, default ''): A custom raw apache configuration for DocumentRoot Directory
 * rewrite_rules (optionnal, default undefined): List of Rewrite Rules to apply on this vhost with the following item attributes. Applied only if mod_rewrite is enabled
+
   * condition (optionnal): Rewrite rule condition
   * pattern: Pattern to match
   * dest: Rule to apply
+
 * disallowed_path_regex (optionnal, default undefined): List of forbidden paths to protect. This uses a rewrite rule and a regex matching. Applied only if mod_rewrite is enabled
 * disallowed_files (optionnal, default undefined): List of forbidden files to protect.
 * deflate_compression_level (optionnal, default 9): mod_deflate compression level. Applied only if mod_deflate is enabled
@@ -95,6 +97,7 @@ Here is the exhaustive list of config variables:
 * expire_by_type (optionnal, default undefined): List of file types with a rule expire rule. Applied only if mod_expires is enabled
 * proxy_preserve_host (optionnal, default Off): Preserve requested host when calling the backend server
 * proxy_pass (optionnal, default undefined): List of reverse proxy objects with the following parameters. Applied only if mod_proxy is enabled
+
   * path: local path to map
   * url: backend URL to call
 
@@ -133,7 +136,24 @@ apache:
 
 ### Managing apache security
 
-By default this module configure some apache security
+By default this module configure some apache security. You can configure apache.security keys to set some global security values
+
+* server_tokens (default: Prod): OS type & compiled modules
+* server_signature (default: Off): Server version & virtualhost name
+* trace_enable (default: Off)
+* prevent_clickjacking (default: false): add X-Frame-Options: "sameorigin" header to prevent content embedded on other sites
+* protect_vcs_directories (default: true): forbid access to .svn and .git directories
+```
+---
+apache:
+  security:
+    server_tokens: 'Prod'
+    server_signature: 'Off'
+    trace_enable: 'Off'
+    prevent_clickjacking: false
+    protect_vcs_directories: true
+```
+
 ## Dependencies
 
 Nothing
