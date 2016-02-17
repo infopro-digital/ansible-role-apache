@@ -73,6 +73,7 @@ Other modules installation aren't support at this moment, don't hesistate to do 
 You can manage your virtualhosts using the apache.vhosts variable.
 
 Here is the exhaustive list of config variables:
+
 * ip (optionnal, default apache.ip): apache listening IP
 * port (optionnal, default apache.port): apache listening port
 * server_admin (optionnal, default apache.server_admin): vhost server admin
