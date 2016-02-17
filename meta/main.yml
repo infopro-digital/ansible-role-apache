@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  author: Loic Blot
+  description: Apache module for Debian & FreeBSD
+  company: Infopro Digital
+  license: BSD
+  min_ansible_version: 2.0
+  platforms:
+  - name: Debian
+    versions:
+    - wheezy
+    - jessie
+  - name: FreeBSD
+    versions:
+    - 9.3
+    - 10.0
+    - 10.1
+    - 10.2
+  galaxy_tags:
+    - web
+  issue-tracker-url: https://github.com/infopro-digital/ansible-role-apache/issues
+dependencies: []
