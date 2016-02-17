@@ -63,6 +63,7 @@ apache:
 ```
 
 The following modules will trigger a package installation:
+
 * mod_jk
 * mod_auth_pgsql
 
