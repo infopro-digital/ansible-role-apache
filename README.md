@@ -120,6 +120,10 @@ apache:
       expire_by_type:
         'image/png':
           rule: "access plus 1 day"
+      jk_mounts:
+        - { path: "/*", worker: "cluster01" }
+        - { path: "/static", mount: false, worker: "cluster01" }
+        - { path: "/ext", mount: true, worker: "cluster02" }
 ```
 
 ### Managing JK workers
