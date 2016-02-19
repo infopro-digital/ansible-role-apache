@@ -102,6 +102,11 @@ Here is the exhaustive list of config variables:
   * path: local path to map
   * url: backend URL to call
 
+* jk_mounts (optionnal, default undefined): List of JkMount/JkUnMount directives to apply. Applied only if mod_jk is enabled.
+
+  * path: path to send/ignore
+  * mount (optionnal, default true): set to false to do a JkUnMount
+  * worker: jk worker group to use
 ```
 ---
 apache:
