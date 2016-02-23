@@ -1,4 +1,11 @@
 ---
+- name: "APACHE | Drop default virtualhost"
+  file: path={{ apache.config_path }}/sites-{{ item }}/000-default.conf state=absent
+  with_items:
+    - enabled
+    - available
+  notify: reload apache
+
 - name: "APACHE | Blacklist modules"
   apache2_module: name="{{ item }}" state=absent
   with_items: apache.modules_blacklist

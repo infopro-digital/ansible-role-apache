@@ -78,7 +78,8 @@ Here is the exhaustive list of config variables:
 * ip (optionnal, default apache.ip): apache listening IP
 * port (optionnal, default apache.port): apache listening port
 * server_admin (optionnal, default apache.server_admin): vhost server admin
-* server_name: vhost servername
+* server_name: virtualhost domain name
+* server_aliases (optionnal, default None): list of virtualhost domain name aliases
 * document_root (optionnal, default /var/www/<vhost_name>)
 * custom_log_format (optionnal, default combined): log output format for CustomLog
 * indexes (optionnal, default -indexes): Document root indexes
