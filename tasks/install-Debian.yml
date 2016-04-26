@@ -1,0 +1,13 @@
+---
+- name: "Apache2 | Update apt cache"
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: "Apache2 | Install package"
+  package: name={{ apache.package_name }} state=installed
+
+- name: "Apache2 | Drop default virtualhost"
+  file: path={{ apache.config_path }}/sites-{{ item }}/000-default.conf state=absent
+  with_items:
+    - enabled
+    - available
+  notify: reload apache

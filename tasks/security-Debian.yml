@@ -1,0 +1,7 @@
+---
+- name: "Apache2 | Security configuration"
+  template: src=security.conf dest={{ apache.config_path }}/conf-available/security.conf owner=root group={{ root_group }} mode=0644
+
+- name: "Apache2 | Enable Security Configuration"
+  file: src={{ apache.config_path }}/conf-available/security.conf dest={{ apache.config_path }}/conf-enabled/security.conf state=link
+  notify: reload apache

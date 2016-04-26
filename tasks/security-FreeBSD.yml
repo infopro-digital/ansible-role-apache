@@ -1,0 +1,3 @@
+---
+- name: "Apache2 | Security configuration"
+  template: src=security.conf dest={{ apache.config_path }}/conf.d/security.conf owner=root group={{ root_group }} mode=0644

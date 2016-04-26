@@ -1,0 +1,22 @@
+---
+- name: "Apache2 | Install package"
+  package: name={{ apache.package_name }} state=installed
+
+- name: "Apache2 | base directories"
+  file: name={{ apache.config_path }}/{{ item }} owner=root group={{ root_group }} state=directory mode=0755
+  with_items:
+    - mods-enabled
+    - mods-available
+    - sites-enabled
+    - sites-available
+    - conf.d
+
+- name: "Apache2 | Log directory"
+  file: path="{{ apache.log_path }}" state=directory owner=root group="{{ root_group }}"
+
+- lineinfile: dest="{{ apache.config_path }}/httpd.conf" line="{{ item }}"
+  with_items:
+    - "Include etc/apache24/mods-enabled/*.conf"
+    - "Include etc/apache24/mods-enabled/*.load"
+    - "Include etc/apache24/conf.d/*.conf"
+    - "Include etc/apache24/sites-enabled/*.conf"

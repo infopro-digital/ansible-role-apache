@@ -15,7 +15,6 @@ This role install and configure Apache under various OS
 You will find here the default variables present for this role
 
 ```
----
 apache:
   service_manage: true
   service_enable: true
@@ -25,7 +24,6 @@ apache:
   errordocs: {}
   vhosts: []
   modules: []
-  modules_blacklist: []
   jk:
     method: 'Busyness'
     workers: {}
@@ -45,21 +43,19 @@ You can use apache.modules variables to enable modules and apache.modules_blackl
 Warning: On Debian, default installed modules are not modified by this playbook.
 
 ```
----
 apache:
   modules:
-    - deflate
-    - jk
-    - mime
-    - mpm_worker
-    - negotiation
-    - reqtimeout
-    - rewrite
+    - {name: cgid,        state: absent}
+    - {name: mpm_event,   state: absent}
+    - {name: status,      state: absent}
 
-  modules_blacklist:
-    - cgid
-    - mpm_event
-    - status
+    - {name: deflate,     state: present}
+    - {name: jk,          state: present}
+    - {name: mime,        state: present}
+    - {name: mpm_worker,  state: present}
+    - {name: negotiation, state: present}
+    - {name: reqtimeout,  state: present}
+    - {name: rewrite,     state: present}
 ```
 
 The following modules will trigger a package installation:
@@ -67,7 +63,7 @@ The following modules will trigger a package installation:
 * mod_jk
 * mod_auth_pgsql
 
-Other modules installation aren't support at this moment, don't hesistate to do a PR
+Other modules installation aren't supported at this moment, don't hesistate to do a PR
 
 ### Managing Apache virtualhosts
 
@@ -109,7 +105,6 @@ Here is the exhaustive list of config variables:
   * mount (optionnal, default true): set to false to do a JkUnMount
   * worker: jk worker group to use
 ```
----
 apache:
   vhosts:
     - name: "wordpress_front"
@@ -135,7 +130,6 @@ This variable needs a list of workers and each worker awaits a list of nodes
 If you want to change the load balancing method, you can change globally the apache.jk.method (default is Busyness) 
 or per worker using the method attribute in your worker
 ```
----
 apache:
   jk:
     workers:
@@ -155,7 +149,6 @@ By default this module configure some apache security. You can configure apache.
 * prevent_clickjacking (default: false): add X-Frame-Options: "sameorigin" header to prevent content embedded on other sites
 * protect_vcs_directories (default: true): forbid access to .svn and .git directories
 ```
----
 apache:
   security:
     server_tokens: 'Prod'

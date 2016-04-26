@@ -1,0 +1,13 @@
+---
+- template: src=module.load dest="{{ apache.config_path }}/mods-available/{{ item.load }}" owner=root group={{ root_group }}
+  with_items: "{{ apache.modules }}"
+
+# Remove module lines from httpd.conf
+- lineinfile: dest="{{ apache.config_path }}/httpd.conf" regexp="^LoadModule (.*)" state=absent
+
+# Add module links
+- name: "Apache2 | Manage modules"
+  file: src={{ apache.config_path }}/mods-available/{{ item.name }}.load dest={{ apache.config_path }}/mods-enabled/{{ item.name }}.load state={{ item.state | regex_replace('^present$', 'link') | default(absent) }}
+  with_items: "{{ apache.modules }}"
+  notify: restart apache
+

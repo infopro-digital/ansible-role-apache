@@ -1,32 +1,40 @@
 ---
-- name: "APACHE | mod_jk installation"
+- name: "Apache2 | mod_jk Installation"
   package: name="{{ apache.module_names.jk }}" state=installed
-  when: "'jk' in apache.modules"
+  when: "'{{ item.name }}' == 'jk' and '{{ item.state }}' == 'present' "
+  with_items: "{{ apache.modules}}"
   notify: restart apache
 
-- name: "APACHE | mod_jk configuration"
+- name: "Apache2 | mod_jk Configuration"
   template: src="mod_jk.conf" dest="{{ apache.config_path }}/mods-available/jk.conf" owner=root group={{ root_group }}
-  when: "'jk' in apache.modules"
+  when: "'{{ item.name }}' == 'jk' and '{{ item.state }}' == 'present' "
+  with_items: "{{ apache.modules}}"
   notify: reload apache
 
-- name: "APACHE | mod_jk workers.properties"
+- name: "Apache2 | mod_jk workers.properties"
   template: src="workers.properties" dest="{{ apache.config_path }}/workers.properties" owner=root group={{ root_group }}
-  when: "'jk' in apache.modules"
+  when: "'{{ item.name }}' == 'jk' and '{{ item.state }}' == 'present' "
+  with_items: "{{ apache.modules}}"
   notify: reload apache
 
-- name: "APACHE | mod_auth_pgsql installation"
+- name: "Apache2 | mod_auth_pgsql installation"
   package: name="{{ apache.module_names.auth_pgsql }}" state=installed
-  when: "'auth_pgsql' in apache.modules"
+  when: "'{{ item.name }}' == 'auth_pgsql' and '{{ item.state }}' == 'present' "
+  with_items: "{{ apache.modules}}"
   notify: restart apache
 
-- name: "APACHE | Modules global config removal"
-  file: path={{ apache.config_path }}/mods-enabled/{{ item }}.conf state=absent
-  when: "'{{ item }}' not in apache.modules"
-  with_items: ['jk']
+- name: "Apache2 | Disable Modules"
+  file: path={{ apache.config_path }}/mods-enabled/jk.conf state=absent
+  when: "'{{ item.name }}' == 'jk' and '{{ item.state }}' != 'present' "
+  with_items: "{{ apache.modules}}"
   notify: reload apache
 
-- name: "APACHE | Modules global config activation"
-  file: src={{ apache.config_path }}/mods-available/{{ item }}.conf dest={{ apache.config_path }}/mods-enabled/{{ item }}.conf state=link
-  when: "'{{ item }}' in apache.modules"
-  with_items: ['jk']
+- name: "Apache2 | Enable required Modules"
+  file: src={{ apache.config_path }}/mods-available/jk.conf dest={{ apache.config_path }}/mods-enabled/jk.conf state=link
+  when: "'{{ item.name }}' == 'jk' and '{{ item.state }}' == 'present' "
+  with_items: "{{ apache.modules}}"
   notify: reload apache
+
+- name: "Apache2 | OS specific configuration"
+  include: "modules-{{ ansible_os_family }}.yml"
+

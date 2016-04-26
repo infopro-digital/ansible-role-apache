@@ -10,3 +10,5 @@ apache:
     jk: libapache2-mod-jk
 
 root_group: root
+www_user: www-data
+www_group: www-data

@@ -1,48 +1,41 @@
 ---
-- name: "APACHE | Include OS-specific variables"
+- name: "Apache2 | Include {{ ansible_os_family }} specific variables"
   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: "APACHE | OS specific setup"
-  include: "setup-{{ ansible_os_family }}.yml"
-  when: ansible_os_family in ['Debian']
+- name: "Apache2 | {{ ansible_os_family }} specific installation"
+  include: "install-{{ ansible_os_family }}.yml"
 
-- name: "APACHE | Install package"
-  package: name={{ apache.package_name }} state=installed
-
-- name: "APACHE | base directories"
-  file: name={{ apache.config_path }}/{{ item }} owner=root group={{ root_group }} state=directory mode=0755
-  with_items:
-    - mods-enabled
-    - mods-available
-    - sites-enabled
-    - sites-available
-    - conf.d
-
-- name: "APACHE | Log directory"
-  file: path="{{ apache.log_path }}" state=directory owner=root group="{{ root_group }}"
-
-- name: "APACHE | Modules management"
+- name: "Apache2 | Modules management"
   include: modules.yml
 
-- name: "APACHE | OS specific configuration"
-  include: "config-{{ ansible_os_family }}.yml"
-
-# Configure virtualhost templates
-- name: "APACHE | Virtualhost configuration"
-  template: src=virtualhost.conf dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
-  with_items: apache.vhosts
-  notify: reload apache
-
-- name: "APACHE | Virtualhost activation"
-  file: src={{ apache.config_path }}/sites-available/{{ item.name }}.conf dest={{ apache.config_path }}/sites-enabled/{{ item.name }}.conf state=link
-  with_items: apache.vhosts
-  notify: reload apache
-
 # Security
-- name: "APACHE | Security configuration"
-  template: src=security.conf dest={{ apache.config_path }}/conf.d/security.conf owner=root group={{ root_group }} mode=0644
+- name: "Apache2 | {{ ansible_os_family }} specific security"
+  include: "security-{{ ansible_os_family }}.yml"
+
+# Configure virtualhosts
+- name: "Apache2 | Web Sites Root Directory creation"
+  file: name={{ item.document_root | default('/var/www/' + item.name) }} owner={{ www_user }} group={{ www_group }} state=directory mode=0755
+  with_items: "{{ apache.vhosts }}"
+  when: apache.vhosts is defined
+
+- name: "Apache2 | Virtualhost configuration"
+  template: src=virtualhost.conf dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
+  with_items: "{{ apache.vhosts }}"
+  when: item.custom_template is not defined
+  notify: reload apache
+
+- name: "Apache2 | Virtualhost template deployment"
+  template: src={{ item.custom_template }} dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
+  with_items: "{{ apache.vhosts }}"
+  when: item.custom_template is defined
+  notify: reload apache
+
+- name: "Apache2 | Virtualhost activation"
+  file: src={{ apache.config_path }}/sites-available/{{ item.name }}.conf dest={{ apache.config_path }}/sites-enabled/{{ item.name }}.conf state=link
+  with_items: "{{ apache.vhosts }}"
+  notify: reload apache
 
 # Service
-- name: "APACHE | Service state management"
+- name: "Apache2 | Service state management"
   service: name={{ apache.service_name }} state=started enabled={{ apache.service_enable }}
   when: apache.service_manage

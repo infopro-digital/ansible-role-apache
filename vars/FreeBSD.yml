@@ -7,3 +7,5 @@ apache:
   log_path: /var/log/apache24
 
 root_group: wheel
+www_user: www
+www_group: www

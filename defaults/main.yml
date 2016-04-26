@@ -8,7 +8,6 @@ apache:
   errordocs: {}
   vhosts: []
   modules: []
-  modules_blacklist: []
   jk:
     method: 'Busyness'
     workers: {}
