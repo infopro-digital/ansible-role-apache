@@ -23,7 +23,8 @@ apache:
   port: 80
   errordocs: {}
   vhosts: []
-  modules: []
+  modules:
+    - { name: ..., state: present|absent }
   jk:
     method: 'Busyness'
     workers: {}

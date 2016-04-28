@@ -35,6 +35,6 @@
   with_items: "{{ apache.modules}}"
   notify: reload apache
 
-- name: "Apache2 | OS specific configuration"
+- name: "Apache2 | {{ ansible_os_family }} specific configuration"
   include: "modules-{{ ansible_os_family }}.yml"
 
