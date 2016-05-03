@@ -10,4 +10,3 @@
   file: src={{ apache.config_path }}/mods-available/{{ item.name }}.load dest={{ apache.config_path }}/mods-enabled/{{ item.name }}.load state={{ item.state | regex_replace('^present$', 'link') | default(absent) }}
   with_items: "{{ apache.modules }}"
   notify: restart apache
-

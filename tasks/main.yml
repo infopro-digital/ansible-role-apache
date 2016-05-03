@@ -18,16 +18,21 @@
   with_items: "{{ apache.vhosts }}"
   when: apache.vhosts is defined
 
+- name: "Apache2 | Virtualhost log directory"
+  file: path="{{ item.log_path | default(apache.log_path) }}" state=directory owner=root group="{{ root_group }}"
+  with_items: "{{ apache.vhosts }}"
+  when: apache.vhosts is defined and item.log_path is defined
+
 - name: "Apache2 | Virtualhost configuration"
   template: src=virtualhost.conf dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
   with_items: "{{ apache.vhosts }}"
-  when: item.custom_template is not defined
+  when: apache.vhosts is defined and item.custom_template is not defined
   notify: reload apache
 
 - name: "Apache2 | Virtualhost template deployment"
   template: src={{ item.custom_template }} dest={{ apache.config_path }}/sites-available/{{ item.name }}.conf owner=root group={{ root_group }} mode=0644
   with_items: "{{ apache.vhosts }}"
-  when: item.custom_template is defined
+  when: apache.vhosts is defined and item.custom_template is defined
   notify: reload apache
 
 - name: "Apache2 | Virtualhost activation"

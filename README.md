@@ -77,6 +77,7 @@ Here is the exhaustive list of config variables:
 * server_admin (optionnal, default apache.server_admin): vhost server admin
 * server_name: virtualhost domain name
 * server_aliases (optionnal, default None): list of virtualhost domain name aliases
+* log_path (optional, default apache.log_path): log folder where store apache logs for this vhost
 * document_root (optionnal, default /var/www/<vhost_name>)
 * custom_log_format (optionnal, default combined): log output format for CustomLog
 * indexes (optionnal, default -indexes): Document root indexes
